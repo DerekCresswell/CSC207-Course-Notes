@@ -188,7 +188,7 @@ Since each of these implement the `List` interface, we may use them interchangea
 However, since each has different internals, we may be able to see different results from using each of them.
 For this, we are going to set up a basic profiler to compare the speed of these lists against each other.
 
-This profiler will time how long it takes to create, increment, and search lists of integers.
+This profiler will time how long it takes to create, increment, search, and remove elements from lists of integers.
 We will write it using the `List` interface so that we may pass in any implementation without modifying the profiler itself.
 
 ## A List Profiler
@@ -258,7 +258,7 @@ for (int i = 0; i < length; i++) {
 
 Just as above, we will time this part of the function by calling `currentTimeMillis` before and after our code runs.
 
-Lastly, we want to see how long it takes to search these lists.
+Our next step is to see how long it takes to search these lists.
 We will only look for a few items within the list to get a sense of the performance.
 For this, we can use the `contains` method of the `List` interface which will return a `boolean` based on whether the list contains our item.
 Let's look for a few elements near the start and the end of the list.
@@ -285,6 +285,19 @@ System.out.printf(
     contains_length_add_1
 );
 ```
+
+Our last step is to iteratively pop the front of the list off.
+This is quite simple, in a loop like before we call `List.remove(0)` which will remove the first element of the list.
+
+```java
+for (int i = 0; i < length; i++) {
+
+    list.remove(0);
+
+}
+```
+
+Again, we time and print an appropriate message.
 
 Now, looking at our `time_list` method in full we have the following (provided in the [code folder](./code/Profiler.java)):
 
@@ -319,7 +332,7 @@ public static void time_list(List<Integer> list, String name, int length) {
     end_time = System.currentTimeMillis();
     System.out.printf("\tIncrementing List: %dms\n", end_time - start_time);
 
-    // lastly, we will check that this list contains certain elements.
+    // Then, we will check that this list contains certain elements.
     start_time = System.currentTimeMillis();
 
     boolean contains_1 = list.contains(1);
@@ -338,6 +351,18 @@ public static void time_list(List<Integer> list, String name, int length) {
         length + 1,
         contains_length_add_1
     );
+
+    // Lastly, we will remove the first item until our list is empty.
+    start_time = System.currentTimeMillis();
+
+    for (int i = 0; i < length; i++) {
+
+        list.remove(0);
+
+    }
+
+    end_time = System.currentTimeMillis();
+    System.out.printf("\tPop Front of List: %dms\n", end_time - start_time);
 
 }
 ```

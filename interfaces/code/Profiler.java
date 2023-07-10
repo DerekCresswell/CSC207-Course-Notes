@@ -66,7 +66,7 @@ class Profiler {
         end_time = System.currentTimeMillis();
         System.out.printf("\tIncrementing List: %dms\n", end_time - start_time);
 
-        // lastly, we will check that this list contains certain elements.
+        // Then, we will check that this list contains certain elements.
         start_time = System.currentTimeMillis();
 
         boolean contains_1 = list.contains(1);
@@ -85,6 +85,18 @@ class Profiler {
             length + 1,
             contains_length_add_1
         );
+
+        // Lastly, we will remove the first item until our list is empty.
+        start_time = System.currentTimeMillis();
+
+        for (int i = 0; i < length; i++) {
+
+            list.remove(0);
+
+        }
+
+        end_time = System.currentTimeMillis();
+        System.out.printf("\tPop Front of List: %dms\n", end_time - start_time);
 
     }
 
