@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * This is a list implementation that likes to chat with you!
+ * This is a list implementation that likes to tell you what it's doing!
  */
 class TalkativeList<E> extends ArrayList<E> {
 
@@ -36,22 +36,22 @@ class Profiler {
     /**
      * Prints out the time it takes for a list to perform a given set of operations.
      */
-    public static void time_list(List<Integer> list, String name, int length) {
+    public static void timeList(List<Integer> list, String name, int length) {
 
         System.out.printf("Timing %s:\n", name);
 
         // First, we fill the list with integers.
-        long start_time = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < length; i++) {
             list.add(i);
         }
 
-        long end_time = System.currentTimeMillis();
-        System.out.printf("\tFilling List: %dms\n", end_time - start_time);
+        long endTime = System.currentTimeMillis();
+        System.out.printf("\tFilling List: %dms\n", endTime - startTime);
 
         // Now, we will iterate the list and increment every integer.
-        start_time = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
 
         for (int i = 0; i < length; i++) {
 
@@ -63,31 +63,31 @@ class Profiler {
 
         }
 
-        end_time = System.currentTimeMillis();
-        System.out.printf("\tIncrementing List: %dms\n", end_time - start_time);
+        endTime = System.currentTimeMillis();
+        System.out.printf("\tIncrementing List: %dms\n", endTime - startTime);
 
         // Then, we will check that this list contains certain elements.
-        start_time = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
 
-        boolean contains_1 = list.contains(1);
-        boolean contains_5 = list.contains(5);
-        boolean contains_length = list.contains(length);
-        boolean contains_length_add_1 = list.contains(length + 1);
+        boolean containsOne = list.contains(1);
+        boolean containsFive = list.contains(5);
+        boolean containsLength = list.contains(length);
+        boolean containsLengthAddOne = list.contains(length + 1);
 
-        end_time = System.currentTimeMillis();
-        System.out.printf("\tSearching List: %dms\n", end_time - start_time);
+        endTime = System.currentTimeMillis();
+        System.out.printf("\tSearching List: %dms\n", endTime - startTime);
         System.out.printf(
             "\t\tFound: 1=%b, 5=%b, %d=%b, %d=%b\n",
-            contains_1,
-            contains_5,
+            containsOne,
+            containsFive,
             length,
-            contains_length,
+            containsLength,
             length + 1,
-            contains_length_add_1
+            containsLengthAddOne
         );
 
         // Lastly, we will remove the first item until our list is empty.
-        start_time = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
 
         for (int i = 0; i < length; i++) {
 
@@ -95,8 +95,8 @@ class Profiler {
 
         }
 
-        end_time = System.currentTimeMillis();
-        System.out.printf("\tPop Front of List: %dms\n", end_time - start_time);
+        endTime = System.currentTimeMillis();
+        System.out.printf("\tPop Front of List: %dms\n", endTime - startTime);
 
     }
 
@@ -107,12 +107,12 @@ class Profiler {
      */
     public static void main(String[] args) {
 
-        int list_length = 100000;
+        int listLength = 100000;
 
-        time_list(new ArrayList<>(), "ArrayList", list_length);
-        time_list(new LinkedList<>(), "LinkedList", list_length);
-        time_list(new Vector<>(), "Vector", list_length);
-        time_list(new TalkativeList<>(), "TalkativeList", list_length);
+        timeList(new ArrayList<>(), "ArrayList", listLength);
+        timeList(new LinkedList<>(), "LinkedList", listLength);
+        timeList(new Vector<>(), "Vector", listLength);
+        timeList(new TalkativeList<>(), "TalkativeList", listLength);
 
         // Now create and add your own lists too!
         // Try expirementing with the length of the list, or any other List operations.

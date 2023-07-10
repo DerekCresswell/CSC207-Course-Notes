@@ -3,17 +3,18 @@
 A key part of Java's class design are interfaces.
 Interfaces act as contracts between classes.
 That is, an interface specifies a behaviour that a class must satisfy (in terms of function signatures) without revealing anything about the underlying class.
-In this way, we are able to swap out different implementations of the same interface without needing to change any code that utilises the interface.
+In this way, we are able to swap out different implementations of the same interface without needing to change any code that uses the interface.
 
-We will illustrate how this works by profiling on different implementations of a list and compare their performance.
-After, we will have you write a basic extension on an existing list class.
+We will illustrate how this works by profiling different implementations of a list and compare their performance.
+After, we will have you write a basic extension of an existing list class.
+We will be able to drop in this class to our profiler and see how it performs.
 
 ## Interfaces
 
 In Java, an interface looks much like a class except that we do not have any member variables nor do we define the bodies of methods.
 This is because an interface is meant to describe a behaviour but not tell you _how_ that behaviour is achieved.
 What this allows is for many classes to implement the same interface but use very different code behind the scenes.
-The person using the interfaces doesn't know what the class is doing; only that is _has_ the methods defined in the interface.
+The person using the interfaces doesn't know how any methods are implemented; only that is _has_ the methods defined in the interface.
 
 Let's look at a simple example to get a feel for this.
 
@@ -65,11 +66,11 @@ class TextNotifier implements Notifier {
         int number = user.getPhoneNumber();
 
         // Now use our SMS service to send the message.
-        if (!this.sms_service.isActive()) {
+        if (!this.smsService.isActive()) {
             return false; // Our SMS is offline.
         }
 
-        this.sms_service.sendText(number, message);
+        this.smsService.sendText(number, message);
 
         return true;
 
@@ -96,12 +97,12 @@ class EmailNotifier implements Notifier {
     public boolean send(User user, String message) {
 
         String email = user.getEmail();
-        String from_email = "abc@example.com";
+        String fromEmail = "abc@example.com";
 
         // We must format the email as HTML in order to be sent.
         formatted = this.formatMessage(message);
 
-        this.email_service.sendEmail(email, from_email, formatted)
+        this.email_service.sendEmail(email, fromEmail, formatted)
 
         return true;
 
@@ -110,10 +111,10 @@ class EmailNotifier implements Notifier {
 }
 ```
 
-Again, this class implements the `Notifier` and it's `send` method.
+Again, this class implements the `Notifier` and its `send` method.
 The `EmailNotifier` and `TextNotifier` go about the actual details of sending an message differently.
-Notice the `EmailNotifier` must format it's message (details omitted) and gather the necessary email addresses.
-Whereas the `TextNotifier` had to do additional verification to our user before sending.
+Notice the `EmailNotifier` must format its message (details omitted) and gather the necessary email addresses.
+Whereas the `TextNotifier` had to do additional verification of our user before sending.
 
 Now, why do we want this?
 We can see why this interface is useful by looking at how you, a developer, might leverage this.
@@ -141,8 +142,8 @@ EmailNotifier emailer = EmailNotifier();
 TextNotifier texter = TextNotifier();
 Welcomer welcomer = Welcomer();
 
-welcomer.sendWelcomeMessage(user_1, emailer);
-welcomer.sendWelcomeMessage(user_2, texter);
+welcomer.sendWelcomeMessage(user1, emailer);
+welcomer.sendWelcomeMessage(user2, texter);
 ```
 
 The first user will receive an email welcome and the second will receive a text message.
@@ -201,7 +202,7 @@ class Profiler {
     /**
      * Prints out the time it takes for a list to perform a given set of operations.
      */
-    public static void time_list(List<Integer> list, String name, int length) {
+    public static void timeList(List<Integer> list, String name, int length) {
 
         System.out.printf("Timing %s:\n", name);
 
@@ -210,7 +211,7 @@ class Profiler {
 }
 ```
 
-This function, `time_list`, will be our workhorse.
+This function, `timeList`, will be our workhorse.
 Firstly, the arguments.
 We take in a `List<Integer>` that we will be profiling (note this is the interface, not a class. As well, we explicitly require that the list contains integers).
 As well we take in a name (for printing out information) and a length that we wish to make the list.
@@ -231,17 +232,17 @@ So, to time our function, all we must do is grab the current time before and aft
 We can then take the difference of these times to find the actual elapsed time.
 
 ```java
-long start_time = System.currentTimeMillis();
+long startTime = System.currentTimeMillis();
 
 for (int i = 0; i < length; i++) {
     list.add(i);
 }
 
-long end_time = System.currentTimeMillis();
-System.out.printf("\tFilling List: %dms\n", end_time - start_time);
+long endTime = System.currentTimeMillis();
+System.out.printf("\tFilling List: %dms\n", endTime - startTime);
 ```
 
-Now, we can go through our list again and try to increment every element.
+Now, we can go through our list and replace each element with an incremented value.
 This is done in much the same way as before, except we need to both `get` an element from our list and then `set` it back after incrementing.
 
 ```java
@@ -264,10 +265,10 @@ For this, we can use the `contains` method of the `List` interface which will re
 Let's look for a few elements near the start and the end of the list.
 
 ```java
-boolean contains_1 = list.contains(1);
-boolean contains_5 = list.contains(5);
-boolean contains_length = list.contains(length);
-boolean contains_length_add_1 = list.contains(length + 1);
+boolean containsOne = list.contains(1);
+boolean containsFive = list.contains(5);
+boolean containsLength = list.contains(length);
+boolean containsLengthAddOne = list.contains(length + 1);
 ```
 
 Once again, we will time this code, but we will also print out the results of the search.
@@ -277,12 +278,12 @@ It prints each of our above booleans and the element they related to.
 ```java
 System.out.printf(
     "\t\tFound: 1=%b, 5=%b, %d=%b, %d=%b\n",
-    contains_1,
-    contains_5,
+    containsOne,
+    containsFive,
     length,
-    contains_length,
+    containsLength,
     length + 1,
-    contains_length_add_1
+    containsLengthAddOne
 );
 ```
 
@@ -299,25 +300,25 @@ for (int i = 0; i < length; i++) {
 
 Again, we time and print an appropriate message.
 
-Now, looking at our `time_list` method in full we have the following (provided in the [code folder](./code/Profiler.java)):
+Now, looking at our `timeList` method in full we have the following (provided in the [code folder](./code/Profiler.java)):
 
 ```java
-public static void time_list(List<Integer> list, String name, int length) {
+public static void timeList(List<Integer> list, String name, int length) {
 
     System.out.printf("Timing %s:\n", name);
 
     // First, we fill the list with integers.
-    long start_time = System.currentTimeMillis();
+    long startTime = System.currentTimeMillis();
 
     for (int i = 0; i < length; i++) {
         list.add(i);
     }
 
-    long end_time = System.currentTimeMillis();
-    System.out.printf("\tFilling List: %dms\n", end_time - start_time);
+    long endTime = System.currentTimeMillis();
+    System.out.printf("\tFilling List: %dms\n", endTime - startTime);
 
     // Now, we will iterate the list and increment every integer.
-    start_time = System.currentTimeMillis();
+    startTime = System.currentTimeMillis();
 
     for (int i = 0; i < length; i++) {
 
@@ -329,31 +330,31 @@ public static void time_list(List<Integer> list, String name, int length) {
 
     }
 
-    end_time = System.currentTimeMillis();
-    System.out.printf("\tIncrementing List: %dms\n", end_time - start_time);
+    endTime = System.currentTimeMillis();
+    System.out.printf("\tIncrementing List: %dms\n", endTime - startTime);
 
     // Then, we will check that this list contains certain elements.
-    start_time = System.currentTimeMillis();
+    startTime = System.currentTimeMillis();
 
-    boolean contains_1 = list.contains(1);
-    boolean contains_5 = list.contains(5);
-    boolean contains_length = list.contains(length);
-    boolean contains_length_add_1 = list.contains(length + 1);
+    boolean containsOne = list.contains(1);
+    boolean containsFive = list.contains(5);
+    boolean containsLength = list.contains(length);
+    boolean containsLengthAddOne = list.contains(length + 1);
 
-    end_time = System.currentTimeMillis();
-    System.out.printf("\tSearching List: %dms\n", end_time - start_time);
+    endTime = System.currentTimeMillis();
+    System.out.printf("\tSearching List: %dms\n", endTime - startTime);
     System.out.printf(
         "\t\tFound: 1=%b, 5=%b, %d=%b, %d=%b\n",
-        contains_1,
-        contains_5,
+        containsOne,
+        containsFive,
         length,
-        contains_length,
+        containsLength,
         length + 1,
-        contains_length_add_1
+        containsLengthAddOne
     );
 
     // Lastly, we will remove the first item until our list is empty.
-    start_time = System.currentTimeMillis();
+    startTime = System.currentTimeMillis();
 
     for (int i = 0; i < length; i++) {
 
@@ -361,8 +362,8 @@ public static void time_list(List<Integer> list, String name, int length) {
 
     }
 
-    end_time = System.currentTimeMillis();
-    System.out.printf("\tPop Front of List: %dms\n", end_time - start_time);
+    endTime = System.currentTimeMillis();
+    System.out.printf("\tPop Front of List: %dms\n", endTime - startTime);
 
 }
 ```
@@ -370,30 +371,30 @@ public static void time_list(List<Integer> list, String name, int length) {
 Perhaps a bit lengthy, but it does just what we want it to!
 Now all we need is a `main` function to drive this code.
 We will add this method straight into our `Profiler` class.
-We will need to call our `time_list` function with a couple of different list implementations.
+We will need to call our `timeList` function with a couple of different list implementations.
 Using `ArrayList`, `LinkedList`, and `Vector` we have the following:
 
 ```java
 public static void main(String[] args) {
 
-    int list_length = 100000;
+    int listLength = 100000;
 
-    time_list(new ArrayList<>(), "ArrayList", list_length);
-    time_list(new LinkedList<>(), "LinkedList", list_length);
-    time_list(new Vector<>(), "Vector", list_length);
+    timeList(new ArrayList<>(), "ArrayList", listLength);
+    timeList(new LinkedList<>(), "LinkedList", listLength);
+    timeList(new Vector<>(), "Vector", listLength);
 
 }
 ```
 
 Go ahead and run this function.
 We will get our results printed out for each list.
-You might want to play around with the `list_length` variable to see how the results change.
+You might want to play around with the `listLength` variable to see how your results change.
 Does anything stand out to you?
 
 ### Creating Our Own List
 
 For practice, let's go through implementing our own list.
-We won't do anything too fancy and, in fact, we will utilise an existing list implementation for actually dealing with data.
+We won't do anything too fancy and, in fact, we will use an existing list implementation for actually dealing with data.
 What we want to do is make a talkative list that prints out some details when we do certain things on the list.
 To start, let's define our list and have it extend the `ArrayList`.
 
@@ -403,7 +404,7 @@ class TalkativeList<E> extends ArrayList<E> {
 }
 ```
 
-As is, this is perfectly fun (but very boring) extension of the `ArrayList`.
+As is, this is a perfectly fun, but very boring, extension of the `ArrayList`.
 Let's add some dialogue to the `contains` method so we know what we are searching for.
 Remember from [above](#notifier-example), we must override the `contains` method to achieve this.
 Setting up just the signature of the method we have:
@@ -432,7 +433,7 @@ Since we are extending the `ArrayList` class, we can actually use their implemen
 
 #### Super
 
-To do this, we must utilise the `super` keyword in Java.
+To do this, we must use the `super` keyword in Java.
 This acts quite similarly to the Python `super()` method in that it allows us to access our parent's implementation of certain things.
 Using this, we can call `contains` on our parent class like so:
 
@@ -473,7 +474,7 @@ This looks good!
 Now we may plug this into our `Profiler`'s main method and run the code again!
 
 ```java
-time_list(new TalkativeList<>(), "TalkativeList", list_length);
+timeList(new TalkativeList<>(), "TalkativeList", listLength);
 ```
 
 We can see that when we run the benchmarks we get additional information printed for our `TalkativeList`.
@@ -504,4 +505,4 @@ tracker.printStats();
 ```
 
 Then, provide your class with a new method that prints out all this information you have kept track of.
-We leave this up to you to attempt, but reference back to this document and code as needed.
+We leave this up to you to attempt, but refer back to this document and code as needed.
