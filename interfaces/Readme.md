@@ -222,15 +222,21 @@ class Profiler {
 
 This function, `timeList`, will be our workhorse.
 Firstly, the arguments.
-We take in a `List<Integer>` that we will be profiling (note this is the interface, not a class. As well, we explicitly require that the list contains integers).
-As well we take in a name (for printing out information) and a length that we wish to make the list.
+We take in a `List<Integer>` that we will be profiling (note this is the interface, not a class.
+As well, we explicitly require that the list contains integers).
+We also take in a name (for printing out information).
 
 Now, the first thing we need to do is fill our list with data.
-To do this, we will append each integer from 0 to `length - 1` to our list, like so:
+We will write a private method of the profiler, `addToList`, to do this.
+This will append each integer from `0` to `length - 1` to our list, like so:
 
 ```java
-for (int i = 0; i < length; i++) {
-    list.add(i); // add will insert i at the end of the list.
+private void addToList(List<Integer> list) {
+
+    for (int i = 0; i < length; i++) {
+        list.add(i); // add will insert i at the end of the list.
+    }
+
 }
 ```
 
@@ -239,13 +245,12 @@ The easiest method for this is to use `System.currentTimeMillis()` which simply 
 The documentation for this function can be found [here](https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#currentTimeMillis--).
 So, to time our function, all we must do is grab the current time before and after running our code.
 We can then take the difference of these times to find the actual elapsed time.
+We will add the following to the `timeList` method.
 
 ```java
 long startTime = System.currentTimeMillis();
 
-for (int i = 0; i < length; i++) {
-    list.add(i);
-}
+addToList(list)
 
 long endTime = System.currentTimeMillis();
 System.out.printf("\tFilling List: %dms\n", endTime - startTime);
@@ -253,81 +258,10 @@ System.out.printf("\tFilling List: %dms\n", endTime - startTime);
 
 Now, we can go through our list and replace each element with an incremented value.
 This is done in much the same way as before, except we need to both `get` an element from our list and then `set` it back after incrementing.
+Again, we will make a new private method to accomplish this.
 
 ```java
-for (int i = 0; i < length; i++) {
-
-    // Retrieve the value.
-    int value = list.get(i);
-
-    // Now set it back into the list.
-    list.set(i, value + 1);
-
-}
-```
-
-Just as above, we will time this part of the function by calling `currentTimeMillis` before and after our code runs.
-
-Our next step is to see how long it takes to search these lists.
-We will only look for a few items within the list to get a sense of the performance.
-For this, we can use the `contains` method of the `List` interface which will return a `boolean` based on whether the list contains our item.
-Let's look for a few elements near the start and the end of the list.
-
-```java
-boolean containsOne = list.contains(1);
-boolean containsFive = list.contains(5);
-boolean containsLength = list.contains(length);
-boolean containsLengthAddOne = list.contains(length + 1);
-```
-
-Once again, we will time this code, but we will also print out the results of the search.
-This big print statement will do just that.
-It prints each of our above booleans and the element they related to.
-
-```java
-System.out.printf(
-    "\t\tFound: 1=%b, 5=%b, %d=%b, %d=%b\n",
-    containsOne,
-    containsFive,
-    length,
-    containsLength,
-    length + 1,
-    containsLengthAddOne
-);
-```
-
-Our last step is to iteratively pop the front of the list off.
-This is quite simple, in a loop like before we call `List.remove(0)` which will remove the first element of the list.
-
-```java
-for (int i = 0; i < length; i++) {
-
-    list.remove(0);
-
-}
-```
-
-Again, we time and print an appropriate message.
-
-Now, looking at our `timeList` method in full we have the following (provided in the [code folder](./code/Profiler.java)):
-
-```java
-public void timeList(List<Integer> list, String name) {
-
-    System.out.printf("Timing %s:\n", name);
-
-    // First, we fill the list with integers.
-    long startTime = System.currentTimeMillis();
-
-    for (int i = 0; i < length; i++) {
-        list.add(i);
-    }
-
-    long endTime = System.currentTimeMillis();
-    System.out.printf("\tFilling List: %dms\n", endTime - startTime);
-
-    // Now, we will iterate the list and increment every integer.
-    startTime = System.currentTimeMillis();
+private void incrementListValues(List<Integer> list) {
 
     for (int i = 0; i < length; i++) {
 
@@ -339,45 +273,107 @@ public void timeList(List<Integer> list, String name) {
 
     }
 
+}
+```
+
+Just as above, we will time this part of the function in the `timeList` method by calling `currentTimeMillis` before and after our code runs.
+As well, we will print an appropriate timing message.
+
+Our next step is to see how long it takes to search these lists.
+We will only look for a few items within the list to get a sense of the performance.
+For this, we can use the `contains` method of the `List` interface which will return a `boolean` based on whether the list contains our item.
+Let's look for a few elements near the start and the end of the list.
+
+```java
+private boolean[] searchList(List<Integer> list) {
+
+    boolean[] results = new boolean[4];
+
+    results[0] = list.contains(1);
+    results[1] = list.contains(5);
+    results[2] = list.contains(length);
+    results[3] = list.contains(length + 1);
+
+    return results;
+
+}
+```
+
+For this method, we will return the results of our search as an array of booleans.
+Since we are only doing a constant number of searches, we may use a plain array here as opposed to a `List`.
+
+Once again, we will time this code within `timeList`, but we will also print out the results of the search.
+We must use the method `Arrays.toString` from the Java library to easily convert these results into a printable form.
+
+```java
+System.out.printf(
+    "\t\tSearch results: %s\n",
+    Arrays.toString(searchResults)
+);
+```
+
+Our last step is to iteratively pop the front of the list off.
+This is quite simple, in a loop like before we call `List.remove(0)` which will remove the first element of the list.
+And, you guessed it, one more private method!
+
+```java
+private void popFrontOfList(List<Integer> list) {
+
+    for (int i = 0; i < length; i++) {
+        list.remove(0);
+    }
+
+}
+```
+
+Again, we time this and print an appropriate message.
+
+Now, looking at our `timeList` method in full we have the following (provided in the [code folder](./code/Profiler.java)):
+
+```java
+public void timeList(List<Integer> list, String name) {
+
+    System.out.printf("Timing %s:\n", name);
+
+    // First, we fill the list with integers.
+    long startTime = System.currentTimeMillis();
+
+    addToList(list);
+
+    long endTime = System.currentTimeMillis();
+    System.out.printf("\tFilling List: %dms\n", endTime - startTime);
+
+    // Now, we will iterate the list and increment every integer.
+    startTime = System.currentTimeMillis();
+
+    incrementListValues(list);
+
     endTime = System.currentTimeMillis();
     System.out.printf("\tIncrementing List: %dms\n", endTime - startTime);
 
     // Then, we will check that this list contains certain elements.
     startTime = System.currentTimeMillis();
 
-    boolean containsOne = list.contains(1);
-    boolean containsFive = list.contains(5);
-    boolean containsLength = list.contains(length);
-    boolean containsLengthAddOne = list.contains(length + 1);
+    boolean[] searchResults = searchList(list);
 
     endTime = System.currentTimeMillis();
     System.out.printf("\tSearching List: %dms\n", endTime - startTime);
     System.out.printf(
-        "\t\tFound: 1=%b, 5=%b, %d=%b, %d=%b\n",
-        containsOne,
-        containsFive,
-        length,
-        containsLength,
-        length + 1,
-        containsLengthAddOne
+        "\t\tSearch results: %s\n",
+        Arrays.toString(searchResults)
     );
 
     // Lastly, we will remove the first item until our list is empty.
     startTime = System.currentTimeMillis();
 
-    for (int i = 0; i < length; i++) {
-
-        list.remove(0);
-
-    }
+    popFrontOfList(list);
 
     endTime = System.currentTimeMillis();
-    System.out.printf("\tPop Front of List: %dms\n", endTime - startTime);
+    System.out.printf("\tPop Front of List: %dms\n\n", endTime - startTime);
 
 }
 ```
 
-Perhaps a bit lengthy, but it does just what we want it to!
 Now all we need is a `main` function to drive this code (this may be placed directly in the `Profiler` class).
 We will add this method straight into our `Profiler` class.
 We will need to call our `timeList` function with a couple of different list implementations.
@@ -484,7 +480,7 @@ This looks good!
 Now we may plug this into our `Profiler`'s main method and run the code again!
 
 ```java
-timeList(new TalkativeList<>(), "TalkativeList", listLength);
+profiler.timeList(new TalkativeList<>(), "TalkativeList");
 ```
 
 We can see that when we run the benchmarks we get additional information printed for our `TalkativeList`.
