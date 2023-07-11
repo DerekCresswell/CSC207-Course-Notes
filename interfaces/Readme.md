@@ -199,10 +199,19 @@ To start, we will make a profiler class and a method for timing a list:
 ```java
 class Profiler {
 
+    // The length of the lists we will profile.
+    int length;
+
+    public Profiler(int length) {
+
+        this.length = length;
+
+    }
+
     /**
      * Prints out the time it takes for a list to perform a given set of operations.
      */
-    public static void timeList(List<Integer> list, String name, int length) {
+    public void timeList(List<Integer> list, String name) {
 
         System.out.printf("Timing %s:\n", name);
 
@@ -303,7 +312,7 @@ Again, we time and print an appropriate message.
 Now, looking at our `timeList` method in full we have the following (provided in the [code folder](./code/Profiler.java)):
 
 ```java
-public static void timeList(List<Integer> list, String name, int length) {
+public void timeList(List<Integer> list, String name) {
 
     System.out.printf("Timing %s:\n", name);
 
@@ -369,7 +378,7 @@ public static void timeList(List<Integer> list, String name, int length) {
 ```
 
 Perhaps a bit lengthy, but it does just what we want it to!
-Now all we need is a `main` function to drive this code.
+Now all we need is a `main` function to drive this code (this may be placed directly in the `Profiler` class).
 We will add this method straight into our `Profiler` class.
 We will need to call our `timeList` function with a couple of different list implementations.
 Using `ArrayList`, `LinkedList`, and `Vector` we have the following:
@@ -378,10 +387,11 @@ Using `ArrayList`, `LinkedList`, and `Vector` we have the following:
 public static void main(String[] args) {
 
     int listLength = 100000;
+    Profiler profiler = new Profiler(listLength);
 
-    timeList(new ArrayList<>(), "ArrayList", listLength);
-    timeList(new LinkedList<>(), "LinkedList", listLength);
-    timeList(new Vector<>(), "Vector", listLength);
+    profiler.timeList(new ArrayList<>(), "ArrayList");
+    profiler.timeList(new LinkedList<>(), "LinkedList");
+    profiler.timeList(new Vector<>(), "Vector");
 
 }
 ```

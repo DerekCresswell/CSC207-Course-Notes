@@ -31,12 +31,24 @@ class TalkativeList<E> extends ArrayList<E> {
 
 }
 
+/**
+ * Performs a profiling test on list interfaces.
+ */
 class Profiler {
+
+    // The length of the lists we will profile.
+    int length;
+
+    public Profiler(int length) {
+
+        this.length = length;
+
+    }
 
     /**
      * Prints out the time it takes for a list to perform a given set of operations.
      */
-    public static void timeList(List<Integer> list, String name, int length) {
+    public void timeList(List<Integer> list, String name) {
 
         System.out.printf("Timing %s:\n", name);
 
@@ -100,19 +112,15 @@ class Profiler {
 
     }
 
-    /**
-     *
-     * This will run a simple profiler that times different implementations of the list interface.
-     *
-     */
     public static void main(String[] args) {
 
         int listLength = 100000;
+        Profiler profiler = new Profiler(listLength);
 
-        timeList(new ArrayList<>(), "ArrayList", listLength);
-        timeList(new LinkedList<>(), "LinkedList", listLength);
-        timeList(new Vector<>(), "Vector", listLength);
-        timeList(new TalkativeList<>(), "TalkativeList", listLength);
+        profiler.timeList(new ArrayList<>(), "ArrayList");
+        profiler.timeList(new LinkedList<>(), "LinkedList");
+        profiler.timeList(new Vector<>(), "Vector");
+        profiler.timeList(new TalkativeList<>(), "TalkativeList");
 
         // Now create and add your own lists too!
         // Try expirementing with the length of the list, or any other List operations.
