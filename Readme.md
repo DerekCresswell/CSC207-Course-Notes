@@ -10,7 +10,7 @@ This is as opposed to a list of concepts and syntax for one to memorize.
 With that in mind, it is strongly encouraged that students have open a 'scratch file' in which they can copy and experiment with any provided code.
 
 > By scratch file, we mean a Java file (or multiple) with a main function set up that you can quickly modify and play with results.
-> See [here](scratch.java) for a template file.
+> See [here](Scratch.java) for a template file.
 
 This is __key__ to truly understanding the language as we progress.
 These notes will ask you to run, expand, and understand presented code.
