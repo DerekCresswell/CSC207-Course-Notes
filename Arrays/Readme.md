@@ -1,4 +1,4 @@
-# CSC207 Course Notes - Interfaces
+# CSC207 Course Notes - Arrays
 
 The array is a key component in almost every programming langauge and Java is no exception!
 Here, we will quickly discuss some of the basics of using arrays in Java.
