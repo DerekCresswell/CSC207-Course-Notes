@@ -104,8 +104,61 @@ You can even use the explicit [fibonacci function](#calculating-fibonacci-number
 
 Try running this code in a [scratch file](../Scratch.java) and see the results.
 
+> Note: Arrays also have a `.length` attribute (ie. `fibonacci_numbers.length`).
+
 ### Array Initialization
+
+Sometimes, you might need to make a small array and will know the exact values it will hold when you create it.
+For this, there is a simpler way to create an array.
+
+Perhaps we want to have a simple mapping of exit codes to a text description of them.
+Here, we could use an array like so:
+
+```java
+// Assumes exit_code is a valid code (ie. 0, 1, or 2).
+void print_exit_code(int exit_code) {
+    String[] exit_codes = {"OK", "WARNING", "ERROR"};
+
+    System.out.println(exit_codes[exit_code]);
+}
+```
+
+Here, Java is able to infer the length of our array when running our code.
 
 ### Nested Arrays
 
+Java arrays may hold any type of values, including other arrays.
+Using this, we may set up data structures like matrices with ease.
+
+```java
+// A 4 by 4 matrix.
+float[][] square_matrix = new float[4][4];
+
+// Set a few values within the matrix.
+square_matrix[0][0] = 2.0; // The top-left element.
+square_matrix[3][3] = 1.5; // The bottom-right element.
+square_matrix[0][3] = 3.14; // The top-right element.
+```
+
+We can also do this with varying lengths per row, but you will need to be more careful when accessing values as to not go out of bounds.
+
+```java
+// A 2x? matrix.
+float[][] odd_matrix = new float[2][];
+
+odd_matrix[0] = new float[4];
+odd_matrix[1] = new float[8];
+```
+
 ## ArrayList
+
+When using plain arrays in Java we do need explictly declare the lengths.
+This can make it difficult to add new elements into our arrays.
+If we wanted to expand our array, we would need to first create a new longer array and then copy all of our existing data into the new array.
+After that, we could add our new element.
+Of course, once we use up all the space within that array we would need to repeat this process.
+
+Luckily for us, Java has a solution already built into its libraries.
+This is the [`ArrayList`](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html).
+The `ArrayList` is more akin to the `List` in Python than Java's arrays.
+We will talk more about this when we discuss [interfaces](../interfaces).
